@@ -4,44 +4,76 @@ using UnityEngine;
 
 public class GravitySwitch : MonoBehaviour
 {
-
-    bool pushFlag;
-    bool flag;
-    public float gravity;
-    public State mState;
-    private Order mOrder;
+    bool pushFlag; //押しているかどうかのフラグ
+    public Order mOrder = Order.urdl; //重力切り替えの順番のフラグ
+    public Direct mDirect = Direct.Down; //今の重力方向
+    private Direct firstDirect; //初期重力方向
+    private Rigidbody2D rb = null;
+    public float gravity = 9.81f;
+    public Tag mTag = Tag.capture; //オブジェクトの属性(重力方向が切り替えられるかどうか)
     
-    private enum Order
+    public enum Direct
     {
-        urdl
+        Down,
+        Up,
+        Left,
+        Right
+    };
+    
+    public enum Tag
+    {
+        change, //必ず重力方向が変更される
+        capture, //自分でオンオフできる．オンの状態
+        release, //自分でオンオフできる．オフの状態
+        unchange //重力方向が変えられない
+    };
+    
+    public enum Order
+    {
+        urdl //時計回り
     };
 
-    public enum State
+    public void GravityForce() //重力を作用させる関数
     {
-        nextDown,
-        nextLeft,
-        nextRight,
-        nextUp
-    };
+        switch (mDirect)
+        {
+            case Direct.Up:
+                rb.AddForce(new Vector2(0.0f, gravity));
+                transform.rotation = Quaternion.Euler(new Vector3(0.0f, 0.0f, 180.0f));
+                break;
+            case Direct.Down:
+                rb.AddForce(new Vector2(0.0f, -gravity));
+                transform.rotation = Quaternion.Euler(new Vector3(0.0f, 0.0f, 0.0f));
+                break;
+            case Direct.Left:
+                rb.AddForce(new Vector2(-gravity, 0.0f));
+                transform.rotation = Quaternion.Euler(new Vector3(0.0f, 0.0f, 270.0f));
+                break;
+            case Direct.Right:
+                rb.AddForce(new Vector2(gravity, 0.0f));
+                transform.rotation = Quaternion.Euler(new Vector3(0.0f, 0.0f, 90.0f));
+                break;
+        }
+    }
 
-    private State ChangeState()
+    private Direct ChangeDirect() //重力方向を変更する関数
     {
         switch (mOrder)
         {
             case Order.urdl:
-                switch (mState)
+                switch (mDirect)
                 {
-                    case State.nextDown:
-                        return State.nextLeft;
+                    case Direct.Up:
+                        return Direct.Right;
                         break;
-                    case State.nextLeft:
-                        return State.nextUp;
+                    case Direct.Down:
+                        return Direct.Left;
                         break;
-                    case State.nextUp:
-                        return State.nextRight;
+                    case Direct.Left:
+                        return Direct.Up;
                         break;
-                    case State.nextRight:
-                        return State.nextDown;
+                    case Direct.Right:
+                        return Direct.Down;
                         break;
                     default:
                         return 0;
@@ -55,44 +87,35 @@ public class GravitySwitch : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        mState = State.nextLeft;
+        rb = GetComponent<Rigidbody2D>();
         pushFlag = false;
-        flag = false;
+        firstDirect = mDirect;
     }
 
     // Update is called once per frame
     void Update()
     {
-        mOrder = Order.urdl;
+        GravityForce();
 
-        if (Input.GetKey(KeyCode.Space))
+        if (Input.GetKey(KeyCode.Space) 
+            && (mTag == Tag.change || mTag == Tag.capture)
+            )//接地判定も加える
         {
             if (!pushFlag)
             {
                 pushFlag = true;
-                switch (mState)
-                {
-                    case State.nextUp:
-                        Physics2D.gravity = new Vector2 (0.0f, gravity);
-                        break;
-                    case State.nextDown:
-                        Physics2D.gravity = new Vector2 (0.0f, -gravity);
-                        break;
-                    case State.nextLeft:
-                        Physics2D.gravity = new Vector2 (-gravity, 0.0f);
-                        break;
-                    case State.nextRight:
-                        Physics2D.gravity = new Vector2 (gravity, 0.0f);
-                        break;
-                    default:
-                        return;
-                }
-                mState = ChangeState();
+                mDirect = ChangeDirect();
             }
         }
         else
         {
             pushFlag = false;
         }
+
+        if (mTag == Tag.release)
+        {
+            mDirect = firstDirect;
+        }
+
     }
 }
