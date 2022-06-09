@@ -1264,9 +1264,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mOrder: 0
-  mDirect: 0
+  mDirect: 2
   gravity: 9.81
-  mTag: 3
+  mTag: 1
 --- !u!50 &1006290899
 Rigidbody2D:
   serializedVersion: 4
@@ -1287,7 +1287,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!1 &1228823586
 GameObject:
   m_ObjectHideFlags: 0
