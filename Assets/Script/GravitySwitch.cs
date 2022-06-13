@@ -11,6 +11,8 @@ public class GravitySwitch : MonoBehaviour
     private Rigidbody2D rb = null;
     public float gravity = 9.81f;
     public Tag mTag = Tag.capture; //オブジェクトの属性(重力方向が切り替えられるかどうか)
+
+    public GroundTrigger ground;
     
     public enum Direct
     {
@@ -99,7 +101,7 @@ public class GravitySwitch : MonoBehaviour
 
         if (Input.GetKey(KeyCode.Space) 
             && (mTag == Tag.change || mTag == Tag.capture)
-            )//接地判定も加える
+            && ground.IsGround())
         {
             if (!pushFlag)
             {
