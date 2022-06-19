@@ -13,7 +13,7 @@ public class GravitySwitch : MonoBehaviour
     public Tag mTag = Tag.capture; //オブジェクトの属性(重力方向が切り替えられるかどうか)
 
     public GroundTrigger ground;
-    
+
     public enum Direct
     {
         Down,
