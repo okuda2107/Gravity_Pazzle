@@ -2,10 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player : MonoBehaviour
+public class Player : GravitySwitch
 {
-
-    public GravitySwitch graSwi;
     private Rigidbody2D rb = null;
 
     public float mSpeed;
@@ -31,7 +29,7 @@ public class Player : MonoBehaviour
         bool upFlag = Input.GetKey(KeyCode.UpArrow);
         bool downFlag = Input.GetKey(KeyCode.DownArrow);
 
-        if (graSwi.mDirect == GravitySwitch.Direct.Down || graSwi.mDirect == GravitySwitch.Direct.Up)
+        if (mDirect == GravitySwitch.Direct.Down || mDirect == GravitySwitch.Direct.Up)
         {
             if (leftFlag && !rightFlag)
             {
@@ -45,7 +43,7 @@ public class Player : MonoBehaviour
             }         
             ySpeed = rb.velocity.y;
         }
-        else if (graSwi.mDirect == GravitySwitch.Direct.Left || graSwi.mDirect == GravitySwitch.Direct.Right)
+        else if (mDirect == GravitySwitch.Direct.Left || mDirect == GravitySwitch.Direct.Right)
         {
             if (upFlag && !downFlag)
             {

@@ -4,13 +4,14 @@ using UnityEngine;
 
 public class GravitySwitch : MonoBehaviour
 {
-    bool pushFlag; //押しているかどうかのフラグ
+    bool pushFlag = false; //押しているかどうかのフラグ
     public Order mOrder = Order.urdl; //重力切り替えの順番のフラグ
     public Direct mDirect = Direct.Down; //今の重力方向
-    private Direct firstDirect; //初期重力方向
+    protected Direct firstDirect; //初期重力方向
     private Rigidbody2D rb = null;
     public float gravity = 9.81f;
     public Tag mTag = Tag.capture; //オブジェクトの属性(重力方向が切り替えられるかどうか)
+    public Player mPlayer;
 
     public GroundTrigger ground;
 
@@ -58,12 +59,12 @@ public class GravitySwitch : MonoBehaviour
         }
     }
 
-    private Direct ChangeDirect() //重力方向を変更する関数
+    protected Direct ChangeDirect() //重力方向を変更する関数
     {
         switch (mOrder)
         {
             case Order.urdl:
-                switch (mDirect)
+                switch (mPlayer.graSwi.mDirect)
                 {
                     case Direct.Up:
                         return Direct.Right;
@@ -86,24 +87,12 @@ public class GravitySwitch : MonoBehaviour
         }
     }
 
-    // Start is called before the first frame update
-    void Start()
+    protected void GravityChange()
     {
-        rb = GetComponent<Rigidbody2D>();
-        pushFlag = false;
-        firstDirect = mDirect;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        GravityForce();
-
         if (Input.GetKey(KeyCode.Space) 
-            && (mTag == Tag.change || mTag == Tag.capture)
-            && ground.IsGround())
+            && (mTag == Tag.change || mTag == Tag.capture))
         {
-            if (!pushFlag)
+            if ((!pushFlag) && ground.IsGround())
             {
                 pushFlag = true;
                 mDirect = ChangeDirect();
@@ -118,6 +107,19 @@ public class GravitySwitch : MonoBehaviour
         {
             mDirect = firstDirect;
         }
+    }
 
+    // Start is called before the first frame update
+    void Start()
+    {
+        rb = GetComponent<Rigidbody2D>();
+        firstDirect = mDirect;
+    }
+
+    // Update is called once per frame
+    void LateUpdate()
+    {
+        GravityForce();
+        GravityChange();
     }
 }
