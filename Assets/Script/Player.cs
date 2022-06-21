@@ -2,11 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player : GravitySwitch
+public class Player : Gravity
 {
-    private Rigidbody2D rb = null;
-
     public float mSpeed;
+    [System.NonSerialized] public bool gravityFlag = false;
 
     enum State
     {
@@ -29,7 +28,7 @@ public class Player : GravitySwitch
         bool upFlag = Input.GetKey(KeyCode.UpArrow);
         bool downFlag = Input.GetKey(KeyCode.DownArrow);
 
-        if (mDirect == GravitySwitch.Direct.Down || mDirect == GravitySwitch.Direct.Up)
+        if (mDirect == Gravity.Direct.Down || mDirect == Gravity.Direct.Up)
         {
             if (leftFlag && !rightFlag)
             {
@@ -43,7 +42,7 @@ public class Player : GravitySwitch
             }         
             ySpeed = rb.velocity.y;
         }
-        else if (mDirect == GravitySwitch.Direct.Left || mDirect == GravitySwitch.Direct.Right)
+        else if (mDirect == Gravity.Direct.Left || mDirect == Gravity.Direct.Right)
         {
             if (upFlag && !downFlag)
             {
@@ -61,6 +60,29 @@ public class Player : GravitySwitch
         rb.velocity = new Vector2(xSpeed, ySpeed);         
     }
 
+    private void GravityChange()
+    {
+        if (Input.GetKey(KeyCode.Space) 
+            && (mTag == Tag.change || mTag == Tag.capture))
+        {
+            if ((!pushFlag) && ground.IsGround())
+            {
+                pushFlag = true;
+                gravityFlag = true;
+                mDirect = ChangeDirect();
+            }
+        }
+        else
+        {
+            pushFlag = false;
+        }
+
+        if (mTag == Tag.release)
+        {
+            mDirect = firstDirect;
+        }
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -70,6 +92,9 @@ public class Player : GravitySwitch
     // Update is called once per frame
     void Update()
     {
+        Debug.Log(ground.IsGround());
+        GravityForce();
+        GravityChange();
         Move();
     }
 }
