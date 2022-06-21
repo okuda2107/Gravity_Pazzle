@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class Player : Gravity
 {
-    public float mSpeed;
+    public float mForce;
+    public float maxSpeed;
+    public float mBrake;
     [System.NonSerialized] public bool gravityFlag = false;
 
     enum State
@@ -21,43 +23,45 @@ public class Player : Gravity
 
     public void Move()
     {
-        float xSpeed = 0.0f;
-        float ySpeed = 0.0f;
         bool leftFlag = Input.GetKey(KeyCode.LeftArrow);
         bool rightFlag = Input.GetKey(KeyCode.RightArrow);
         bool upFlag = Input.GetKey(KeyCode.UpArrow);
         bool downFlag = Input.GetKey(KeyCode.DownArrow);
-
+//もうちょっとブレーキをかけたい，横軸方向速度に制限を付ける
         if (mDirect == Gravity.Direct.Down || mDirect == Gravity.Direct.Up)
         {
             if (leftFlag && !rightFlag)
             {
                 transform.localScale = new Vector3(-1, 1, 1);
-                xSpeed = -mSpeed;
+                rb.AddForce(new Vector2(-mForce, 0.0f));
             }
             if (rightFlag && !leftFlag)
             {
                 transform.localScale = new Vector3(1, 1, 1);
-                xSpeed = mSpeed;
+                rb.AddForce(new Vector2(mForce, 0.0f));
+            }
+            if (!leftFlag && !rightFlag)
+            {
+                float offset = rb.velocity.x;
             }         
-            ySpeed = rb.velocity.y;
         }
         else if (mDirect == Gravity.Direct.Left || mDirect == Gravity.Direct.Right)
         {
             if (upFlag && !downFlag)
             {
                 transform.localScale = new Vector3(1, 1, 1);
-                ySpeed = mSpeed;
+                rb.AddForce(new Vector2(0.0f, mForce));
             }
             if (downFlag && !upFlag)
             {
                 transform.localScale = new Vector3(-1, 1, 1);
-                ySpeed = -mSpeed;
+                rb.AddForce(new Vector2(0.0f, -mForce));
             }
-            xSpeed = rb.velocity.x;
+            if (!upFlag && !downFlag)
+            {
+                float offset = rb.velocity.y;
+            }
         }
-
-        rb.velocity = new Vector2(xSpeed, ySpeed);         
     }
 
     private void GravityChange()
