@@ -27,9 +27,11 @@ public class Player : Gravity
         bool rightFlag = Input.GetKey(KeyCode.RightArrow);
         bool upFlag = Input.GetKey(KeyCode.UpArrow);
         bool downFlag = Input.GetKey(KeyCode.DownArrow);
-//もうちょっとブレーキをかけたい，横軸方向速度に制限を付ける
+        
         if (mDirect == Gravity.Direct.Down || mDirect == Gravity.Direct.Up)
         {
+            if (-maxSpeed < rb.velocity.x && rb.velocity.x < maxSpeed)
+            {
             if (leftFlag && !rightFlag)
             {
                 transform.localScale = new Vector3(-1, 1, 1);
@@ -43,10 +45,15 @@ public class Player : Gravity
             if (!leftFlag && !rightFlag)
             {
                 float offset = rb.velocity.x;
+                offset *= mBrake;
+                rb.velocity = new Vector2(offset, rb.velocity.y);
+            }
             }         
         }
         else if (mDirect == Gravity.Direct.Left || mDirect == Gravity.Direct.Right)
         {
+            if (-maxSpeed < rb.velocity.y && rb.velocity.y < maxSpeed)
+            {
             if (upFlag && !downFlag)
             {
                 transform.localScale = new Vector3(1, 1, 1);
@@ -60,6 +67,9 @@ public class Player : Gravity
             if (!upFlag && !downFlag)
             {
                 float offset = rb.velocity.y;
+                offset *= mBrake;
+                rb.velocity = new Vector2(rb.velocity.x, offset);
+            }
             }
         }
     }

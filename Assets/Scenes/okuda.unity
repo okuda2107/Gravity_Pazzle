@@ -1404,6 +1404,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 857106799}
     - target: {fileID: 8997974031355868873, guid: 16f282d1e5907274c82ca27f32956fe3, type: 3}
+      propertyPath: mBrake
+      value: 0.98
+      objectReference: {fileID: 0}
+    - target: {fileID: 8997974031355868873, guid: 16f282d1e5907274c82ca27f32956fe3, type: 3}
       propertyPath: mForce
       value: 10
       objectReference: {fileID: 0}
