@@ -23,6 +23,7 @@ public class CameraFollowTarget : MonoBehaviour
     void LateUpdate()
     {
         // カメラの位置をターゲットの位置にオフセットを足した場所にする。
-        gameObject.transform.position = target.transform.position + offset;
+        transform.position = Vector3.Lerp(transform.position, target.transform.position + offset, 6.0f * Time.deltaTime);
+
     }
 }
