@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GravitySwitch : MonoBehaviour
+public class Gravity : MonoBehaviour
 {
     protected bool pushFlag = false; //押しているかどうかのフラグ
     public Order mOrder = Order.urdl; //重力切り替えの順番のフラグ
@@ -86,39 +86,15 @@ public class GravitySwitch : MonoBehaviour
         }
     }
 
-    virtual public void GravityChange()
-    {
-        if (Input.GetKey(KeyCode.Space) 
-            && (mTag == Tag.change || mTag == Tag.capture))
-        {
-            if ((!pushFlag) && ground.IsGround())
-            {
-                pushFlag = true;
-                mDirect = ChangeDirect();
-            }
-        }
-        else
-        {
-            pushFlag = false;
-        }
-
-        if (mTag == Tag.release)
-        {
-            mDirect = firstDirect;
-        }
-    }
-
     // Start is called before the first frame update
     void Start()
     {
-        rb = GetComponent<Rigidbody2D>();
-        firstDirect = mDirect;
+        
     }
 
     // Update is called once per frame
     void Update()
     {
-        GravityForce();
-        GravityChange(); //mPlayer.mDirectを変更した後に他のオブジェクトの変更に移っているから二つ後のmDirectになってしまう
+        
     }
 }
